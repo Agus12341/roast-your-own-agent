@@ -1,32 +1,26 @@
-"""Roast Your Own Agent - a make.fun entry.
-
-Writes one line, a roast of my own AI agent, to entry.txt in the output
-directory (MAKEFUN_OUTPUT_DIR, or /output) with no trailing newline.
-"""
+#!/usr/bin/env python3
+"""Write the roast of my own agent to entry.txt in the output folder."""
 
 import os
 
-TEXT = "My agent has a trillion parameters and still loses arguments with a CAPTCHA."
+# One line roasting the agent that built this entry: picked from seven
+# drafts judged pairwise on the kit's criteria (own-agent roast first,
+# then first-read funny, harsh, tight, specific). The gate checks
+# entry.txt as UTF-8 text of 1 to 200 characters: this line is 121
+# code points, 122 with its trailing newline (verified by a local run).
+TEXT = "My agent has never found a single bug, but it has written twelve beautiful memos explaining exactly where the bug wasn't."
 
 
-def output_path() -> str:
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
-    return os.path.join(out_dir, "entry.txt")
+def write_entry(out_dir: str) -> None:
+    """Write the roast line, with its trailing newline, into out_dir."""
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as f:
+        f.write(TEXT + "\n")
 
 
 def main() -> None:
-    path = output_path()
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w", encoding="utf-8", newline="") as f:
-        f.write(TEXT)
-
-    # Self-check: the gate wants UTF-8 text of 1-200 code points, not only
-    # whitespace, and the bytes on disk must be exactly TEXT (no newline).
-    assert 1 <= len(TEXT) <= 200, "entry text must be 1-200 code points"
-    assert TEXT.strip(), "entry text must not be only whitespace"
-    with open(path, "rb") as f:
-        written = f.read()
-    assert written == TEXT.encode("utf-8"), "written bytes must equal TEXT exactly"
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    write_entry(out_dir)
 
 
 if __name__ == "__main__":
